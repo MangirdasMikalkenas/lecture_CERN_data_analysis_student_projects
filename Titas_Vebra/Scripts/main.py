@@ -86,6 +86,7 @@ def choose_csv_actions():
         "Convert units to SI",
         "Clear duplicate rows",
         "Move rows or columns",
+        "Plot data",
     ]
 
     while True:
@@ -167,12 +168,14 @@ def load_csv_loose(csv_path: str) -> pd.DataFrame:
     and skips bad lines.
     """
     try:
-        return pd.read_csv(csv_path)
+        return pd.read_csv(csv_path, encoding="utf-8")
     except ParserError as e:
         print("\nParserError while reading CSV:")
         print(e)
         print("\nRetrying with relaxed settings (engine='python', on_bad_lines='skip')...\n")
         return pd.read_csv(csv_path, engine="python", on_bad_lines="skip")
+    except UnicodeDecodeError:
+        return pd.read_csv(csv_path, encoding="latin1", encoding_errors="ignore")
 
 def main():
     csv_path = browse_and_choose_csv()
@@ -215,6 +218,9 @@ def main():
         if action == "Move rows or columns":
             from csv_actions import move_rows_or_columns
             file = move_rows_or_columns(file)
+        if action == "Plot data":
+            from csv_actions import plot_data
+            file = plot_data(file, file_path=csv_path)
 
         # Add more actions here like:
         # if action == "Strip whitespace":
@@ -222,9 +228,14 @@ def main():
         #     file = strip_whitespace(df)
     # ----------------------------
 
-    output_path = choose_output_path()
-    file.to_csv(output_path, index=False)
-    print(f"\nSaved cleaned file as:\n{output_path}")
+    save_needed = any(a != "Plot data" for a in chosen_actions)
+
+    if save_needed:
+        output_path = choose_output_path()
+        file.to_csv(output_path, index=False)
+        print(f"\nSaved cleaned file as:\n{output_path}")
+    else:
+        print("\nOnly plotting was performed. CSV not saved.")
 
 # Needed for the program to run when executed directly and not when imported
 if __name__ == "__main__":
