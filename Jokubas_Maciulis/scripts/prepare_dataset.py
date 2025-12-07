@@ -20,13 +20,13 @@ background_files = [
 branches = ["Electron_pt", "Electron_eta", "Electron_miniPFRelIso_all",
     "Electron_miniPFRelIso_chg", "Electron_dz", "Electron_dxy", "Electron_ip3d"]
 
-# branches += [
-#     "Jet_pt",
-#     "Jet_eta",
-#     "Jet_phi",
-#     "Jet_btagDeepFlavB",
-#     "Jet_nCharged"
-# ]
+branches += [
+    "Jet_pt",
+    "Jet_eta",
+    "Jet_phi",
+    "Jet_btagDeepFlavB",
+    "Jet_nCharged"
+]
 
 dfs = []
 
